@@ -1,32 +1,52 @@
 <template>
   <div class="inputBox shadow">
-    <input type="text" v-model="newTodoItem" @keyup.enter="addTodo" placeholder="Type what you have to do">
+    <input
+      type="text"
+      v-model="newTodoItem"
+      @keyup.enter="addTodo"
+      placeholder="Type what you have to do"
+    />
     <span class="addContainer" @click="addTodo">
       <i class="addBtn fas fa-plus" aria-hidden="true"></i>
     </span>
+    <modal v-if="showModal" @close="showModal = false">
+      <h3 slot="header">경고</h3>
+      <span slot="footer" @click="showModal = false">
+        할 일을 입력하세요
+        <i class="closeModalBtn fas fa-times" aria-hidden="true"></i>
+      </span>
+    </modal>
   </div>
 </template>
 
 <script>
+import Modal from "./common/Modal";
+
 export default {
   data() {
     return {
-      newTodoItem: '',
+      newTodoItem: "",
+      showModal: false,
     };
+  },
+  components: {
+    Modal,
   },
   methods: {
     addTodo() {
-      if(this.newTodoItem !== ''){
-        let value = this.newTodoItem && this.newTodoItem.trim();
-        localStorage.setItem(value, value);
+      if (this.newTodoItem !== "") {
+        let value = this.newTodoItem.trim();
+        this.$emit("addTodo", value);
         this.clearInput();
+      } else {
+        this.showModal = !this.showModal;
       }
     },
     clearInput() {
-      this.newTodoItem = '';
-    }
-  }
-}
+      this.newTodoItem = "";
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -54,6 +74,4 @@ input:focus {
   color: white;
   vertical-align: middle;
 }
-
-
 </style>
